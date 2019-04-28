@@ -16,8 +16,8 @@ import javax.swing.JFileChooser;
  */
 public class StartWindow extends javax.swing.JDialog {
 
-    public FileHandler fileHandler = new FileHandler();
-    public CommandHandler commandHandler = new CommandHandler();
+    public static FileHandler fileHandler = new FileHandler();
+    public static CommandHandler commandHandler = new CommandHandler();
     /**
      * Creates new form StartWindow
      */

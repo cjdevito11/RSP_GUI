@@ -12,8 +12,8 @@ import javax.swing.ImageIcon;
  * @author CJ
  */
 public class ChooseStar extends javax.swing.JDialog {
-    public FileHandler fileHandler = new FileHandler();
-    public CommandHandler commandHandler = new CommandHandler();
+    public static FileHandler fileHandler = StartWindow.fileHandler;
+    public static CommandHandler commandHandler = StartWindow.commandHandler;
     public String star;
     public String file;
     /**
