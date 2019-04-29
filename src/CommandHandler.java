@@ -1,23 +1,32 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
-public class CommandHandler {
+public class CommandHandler implements Runnable {
 
     private String starName;
     private Process p;
+    String[] commands;
+    String[] envp;
+    File file;
+    String directory;
+    mesaScreen ms = new mesaScreen();
     
-    public CommandHandler(String starName) {
-        this.starName = starName;
-        
-        String[] commands = new String[1];
-        String[] envp = new String[1];
+    public CommandHandler() {
+        commands = new String[1];
+        envp = new String[1];
         envp[0] = "";
-        commands[0] = "ls";
-        File f = new File(System.getProperty("user.home")+"/mesa/star/test_suite/"+this.starName);
-        try {
-            p = Runtime.getRuntime().exec(commands,envp,f);
+        commands[0] = "./rn";
+    }
+    @Override
+    public void run() {
+
+        this.start();
+    }
+
+    public void start () {
+
+         try {
+             ms.setVisible(true);
+            p = Runtime.getRuntime().exec(commands,envp,file);
             BufferedReader br = new BufferedReader(
                     new InputStreamReader(p.getInputStream()));
             String s;
@@ -32,8 +41,50 @@ public class CommandHandler {
             p.waitFor();
             System.out.println("exit: " + p.exitValue());
             p.destroy();
-        } catch (IOException | InterruptedException e) {System.out.println(e);}
-    
+            ms.setVisible(false);
+
+        }catch (IOException | InterruptedException e) {System.out.println(e);}
+
+        System.out.println("File Saved from most recent run : " + lastFileModified());
     }
+    public String lastFileModified() {
+        File fl = new File(file + "/photos");
+       // System.out.println(fl);
+        File[] files = fl.listFiles(new FileFilter() {
+            public boolean accept(File file) {
+             //   System.out.println(file);
+                return file.isFile();
+            }
+        });
+        long lastMod = Long.MIN_VALUE;
+        File choice = null;
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.lastModified() > lastMod) {
+                    choice = file;
+                    lastMod = file.lastModified();
+                }
+            }
+        }
+
+        return choice.getName();
+    }
+
+
+     public void setPath(File fpath, String path) {
+        file = fpath;
+        directory = path;
+    }
+     public void setStarName(String starName) {
+        this.starName = starName;
+    }
+    public void changeFolder(String fileName) {
+        file = new File(directory + "/star/test_suite/" + fileName);
+    }
+
+
+
+
     
 }
