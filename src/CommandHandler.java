@@ -4,29 +4,53 @@ public class CommandHandler implements Runnable {
 
     private String starName;
     private Process p;
-    String[] commands;
+    String[] runCommand;
+    String[] reRunCommand;
     String[] envp;
     File file;
     String directory;
     mesaScreen ms = new mesaScreen();
     
     public CommandHandler() {
-        commands = new String[1];
+        runCommand = new String[1];
+        reRunCommand = new String[1];
         envp = new String[1];
         envp[0] = "";
-        commands[0] = "./rn";
+        runCommand[0] = "./rn";
+        reRunCommand[0] = "./re";
     }
     @Override
     public void run() {
 
         this.start();
     }
+    public void reRun() {
+        try {
+            ms.setVisible(true);
+            reRunCommand[0] = "./re " + lastFileModified();
+            p = Runtime.getRuntime().exec(reRunCommand,envp,file);
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(p.getInputStream()));
+            String s;
+            while ((s = br.readLine()) != null) {
+                System.out.println("line: " + s);
+            }
+            br = new BufferedReader(
+                    new InputStreamReader(p.getErrorStream()));
+            while ((s = br.readLine()) != null) {
+                System.out.println("line: " + s);
+            }
+            p.waitFor();
+            System.out.println("exit: " + p.exitValue());
+            p.destroy();
+            ms.setVisible(false);
 
+        }catch (IOException | InterruptedException e) {System.out.println(e);}
+    }
     public void start () {
-
-         try {
-             ms.setVisible(true);
-            p = Runtime.getRuntime().exec(commands,envp,file);
+        try {
+            ms.setVisible(true);
+            p = Runtime.getRuntime().exec(runCommand,envp,file);
             BufferedReader br = new BufferedReader(
                     new InputStreamReader(p.getInputStream()));
             String s;
